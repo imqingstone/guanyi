@@ -1,0 +1,390 @@
+{
+  "source": "https://zh.wikisource.org/w/index.php?title=周易&oldid=7907208&variant=zh-hant",
+  "description": "文庫《周易》另頁六十四卦速查表，行為下卦、欄為上卦；依六十四卦 Unicode 圖符換算卦序。",
+  "cells": [
+    {
+      "id": 1,
+      "name": "乾",
+      "lower": "乾",
+      "upper": "乾"
+    },
+    {
+      "id": 43,
+      "name": "夬",
+      "lower": "乾",
+      "upper": "兌"
+    },
+    {
+      "id": 14,
+      "name": "大有",
+      "lower": "乾",
+      "upper": "離"
+    },
+    {
+      "id": 34,
+      "name": "大壯",
+      "lower": "乾",
+      "upper": "震"
+    },
+    {
+      "id": 9,
+      "name": "小畜",
+      "lower": "乾",
+      "upper": "巽"
+    },
+    {
+      "id": 5,
+      "name": "需",
+      "lower": "乾",
+      "upper": "坎"
+    },
+    {
+      "id": 26,
+      "name": "大畜",
+      "lower": "乾",
+      "upper": "艮"
+    },
+    {
+      "id": 11,
+      "name": "泰",
+      "lower": "乾",
+      "upper": "坤"
+    },
+    {
+      "id": 10,
+      "name": "履",
+      "lower": "兌",
+      "upper": "乾"
+    },
+    {
+      "id": 58,
+      "name": "兌",
+      "lower": "兌",
+      "upper": "兌"
+    },
+    {
+      "id": 38,
+      "name": "睽",
+      "lower": "兌",
+      "upper": "離"
+    },
+    {
+      "id": 54,
+      "name": "歸妹",
+      "lower": "兌",
+      "upper": "震"
+    },
+    {
+      "id": 61,
+      "name": "中孚",
+      "lower": "兌",
+      "upper": "巽"
+    },
+    {
+      "id": 60,
+      "name": "節",
+      "lower": "兌",
+      "upper": "坎"
+    },
+    {
+      "id": 41,
+      "name": "損",
+      "lower": "兌",
+      "upper": "艮"
+    },
+    {
+      "id": 19,
+      "name": "臨",
+      "lower": "兌",
+      "upper": "坤"
+    },
+    {
+      "id": 13,
+      "name": "同人",
+      "lower": "離",
+      "upper": "乾"
+    },
+    {
+      "id": 49,
+      "name": "革",
+      "lower": "離",
+      "upper": "兌"
+    },
+    {
+      "id": 30,
+      "name": "離",
+      "lower": "離",
+      "upper": "離"
+    },
+    {
+      "id": 55,
+      "name": "豐",
+      "lower": "離",
+      "upper": "震"
+    },
+    {
+      "id": 37,
+      "name": "家人",
+      "lower": "離",
+      "upper": "巽"
+    },
+    {
+      "id": 63,
+      "name": "既濟",
+      "lower": "離",
+      "upper": "坎"
+    },
+    {
+      "id": 22,
+      "name": "賁",
+      "lower": "離",
+      "upper": "艮"
+    },
+    {
+      "id": 36,
+      "name": "明夷",
+      "lower": "離",
+      "upper": "坤"
+    },
+    {
+      "id": 25,
+      "name": "無妄",
+      "lower": "震",
+      "upper": "乾"
+    },
+    {
+      "id": 17,
+      "name": "隨",
+      "lower": "震",
+      "upper": "兌"
+    },
+    {
+      "id": 21,
+      "name": "噬嗑",
+      "lower": "震",
+      "upper": "離"
+    },
+    {
+      "id": 51,
+      "name": "震",
+      "lower": "震",
+      "upper": "震"
+    },
+    {
+      "id": 42,
+      "name": "益",
+      "lower": "震",
+      "upper": "巽"
+    },
+    {
+      "id": 3,
+      "name": "屯",
+      "lower": "震",
+      "upper": "坎"
+    },
+    {
+      "id": 27,
+      "name": "頤",
+      "lower": "震",
+      "upper": "艮"
+    },
+    {
+      "id": 24,
+      "name": "復",
+      "lower": "震",
+      "upper": "坤"
+    },
+    {
+      "id": 44,
+      "name": "姤",
+      "lower": "巽",
+      "upper": "乾"
+    },
+    {
+      "id": 28,
+      "name": "大過",
+      "lower": "巽",
+      "upper": "兌"
+    },
+    {
+      "id": 50,
+      "name": "鼎",
+      "lower": "巽",
+      "upper": "離"
+    },
+    {
+      "id": 32,
+      "name": "恆",
+      "lower": "巽",
+      "upper": "震"
+    },
+    {
+      "id": 57,
+      "name": "巽",
+      "lower": "巽",
+      "upper": "巽"
+    },
+    {
+      "id": 48,
+      "name": "井",
+      "lower": "巽",
+      "upper": "坎"
+    },
+    {
+      "id": 18,
+      "name": "蠱",
+      "lower": "巽",
+      "upper": "艮"
+    },
+    {
+      "id": 46,
+      "name": "升",
+      "lower": "巽",
+      "upper": "坤"
+    },
+    {
+      "id": 6,
+      "name": "訟",
+      "lower": "坎",
+      "upper": "乾"
+    },
+    {
+      "id": 47,
+      "name": "困",
+      "lower": "坎",
+      "upper": "兌"
+    },
+    {
+      "id": 64,
+      "name": "未濟",
+      "lower": "坎",
+      "upper": "離"
+    },
+    {
+      "id": 40,
+      "name": "解",
+      "lower": "坎",
+      "upper": "震"
+    },
+    {
+      "id": 59,
+      "name": "渙",
+      "lower": "坎",
+      "upper": "巽"
+    },
+    {
+      "id": 29,
+      "name": "坎",
+      "lower": "坎",
+      "upper": "坎"
+    },
+    {
+      "id": 4,
+      "name": "蒙",
+      "lower": "坎",
+      "upper": "艮"
+    },
+    {
+      "id": 7,
+      "name": "師",
+      "lower": "坎",
+      "upper": "坤"
+    },
+    {
+      "id": 33,
+      "name": "遯",
+      "lower": "艮",
+      "upper": "乾"
+    },
+    {
+      "id": 31,
+      "name": "咸",
+      "lower": "艮",
+      "upper": "兌"
+    },
+    {
+      "id": 56,
+      "name": "旅",
+      "lower": "艮",
+      "upper": "離"
+    },
+    {
+      "id": 62,
+      "name": "小過",
+      "lower": "艮",
+      "upper": "震"
+    },
+    {
+      "id": 53,
+      "name": "漸",
+      "lower": "艮",
+      "upper": "巽"
+    },
+    {
+      "id": 39,
+      "name": "蹇",
+      "lower": "艮",
+      "upper": "坎"
+    },
+    {
+      "id": 52,
+      "name": "艮",
+      "lower": "艮",
+      "upper": "艮"
+    },
+    {
+      "id": 15,
+      "name": "謙",
+      "lower": "艮",
+      "upper": "坤"
+    },
+    {
+      "id": 12,
+      "name": "否",
+      "lower": "坤",
+      "upper": "乾"
+    },
+    {
+      "id": 45,
+      "name": "萃",
+      "lower": "坤",
+      "upper": "兌"
+    },
+    {
+      "id": 35,
+      "name": "晉",
+      "lower": "坤",
+      "upper": "離"
+    },
+    {
+      "id": 16,
+      "name": "豫",
+      "lower": "坤",
+      "upper": "震"
+    },
+    {
+      "id": 20,
+      "name": "觀",
+      "lower": "坤",
+      "upper": "巽"
+    },
+    {
+      "id": 8,
+      "name": "比",
+      "lower": "坤",
+      "upper": "坎"
+    },
+    {
+      "id": 23,
+      "name": "剝",
+      "lower": "坤",
+      "upper": "艮"
+    },
+    {
+      "id": 2,
+      "name": "坤",
+      "lower": "坤",
+      "upper": "坤"
+    }
+  ]
+}
