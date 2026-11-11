@@ -7,7 +7,7 @@ const key='guanyi-notebook-v1';
 let book=fresh(),warn='',timer,mode='coins',pending=null;
 try{const v=localStorage.getItem(key);if(v)book=validate(JSON.parse(v))}catch{warn='未能讀取本機手記，請從備份還原。'}
 const filters={text:'',upper:'',lower:''},attempts={};
-const blank=()=>({rolls:[],manual:['','','','','',''],lines:null,date:null,question:'',note:'',id:null});
+const blank=()=>({rolls:[],manual:['','','','','',''],lines:null,date:null,question:'',note:'',id:null,topic:''});
 let draft=blank();
 function message(s){$('#status').textContent=s;clearTimeout(timer);timer=setTimeout(()=>$('#status').textContent='',3800)}
 function persist(next){book=validate(next);try{localStorage.setItem(key,JSON.stringify(book));warn=''}catch{warn='無法寫入本機儲存，請匯出本次手記。'}if(warn)message(warn)}
@@ -47,7 +47,7 @@ function log(){return '<div class="log">'+positions.map((p,i)=>{const r=draft.ro
 function cast(){
  if(draft.lines)return reading(draft,false);
  const manual=mode==='manual',last=draft.rolls.at(-1),n=draft.rolls.length;
- return '<article class="read">'+title('互動占卦','每次擲三枚銅錢，由初爻往上記下六次結果。')+'<div class="actions">'+button('coins','逐次擲幣','',manual?'':'primary')+button('manual','手動輸入','',manual?'primary':'')+'</div><section class="box"><label>此刻想思考的問題（選填）<input id="question" maxlength="300" value="'+E(draft.question)+'"></label>'+
+ return '<article class="read">'+title('互動占卦','每次擲三枚銅錢，由初爻往上記下六次結果。')+'<div class="actions">'+button('coins','逐次擲幣','',manual?'':'primary')+button('manual','手動輸入','',manual?'primary':'')+'</div><section class="box"><label>此刻想思考的問題（選填）<input id="question" maxlength="300" value="'+E(draft.question)+'"></label>'+(readyTopics.length?'<fieldset class="topic-pick"><legend>想問的方向</legend>'+[['','綜合'],...readyTopics.map(t=>[t,topicNames[t]])].map(([v,n])=>'<label><input type="radio" name="topic" value="'+v+'"'+(topicOf(draft)===v?' checked':'')+'>'+n+'</label>').join('')+'</fieldset>':'')+
  (manual?'<h2>依序填入六次結果</h2><div class="manual">'+positions.map((p,i)=>'<label>'+p+'<select data-pos="'+i+'"><option value="">請選擇</option>'+[6,7,8,9].map(n=>'<option value="'+n+'" '+(draft.manual[i]===n?'selected':'')+'>'+n+' '+types[n]+'</option>').join('')+'</select></label>').join('')+'</div>'+button('interpret','依六爻解卦 →',draft.manual.every(Boolean)?'':'disabled','primary'):
  '<div class="coins">'+[0,1,2].map(i=>'<span class="coin"><i></i>'+(last?(last.faces[i]===2?'字面 2':'背面 3'):'銅錢')+'</span>').join('')+'</div><small>第 '+(n+1)+' 次／共六次</small><h2>現在擲'+positions[n]+'</h2>'+button('toss','擲三枚銅錢','','primary'))+
  '<p class="muted">本站約定字面為 2、背面為 3。總和 6 為老陰、7 為少陽、8 為少陰、9 為老陽。老陰轉陽，老陽轉陰。</p></section>'+(!manual?'<section class="box"><h2>擲幣紀錄</h2>'+log()+'</section>':'')+'</article>';
@@ -59,15 +59,18 @@ function focusText(it,h,k){
  return {head:who+'卦辭',word:x.judgment,plain:x.gloss.map(s=>s.split('｜')[1]||'').join('')};
 }
 function answer(r,h,k,m){
- const f=focus(r.lines),q=String(r.question||'').trim();
+ const f=focus(r.lines),q=String(r.question||'').trim(),tp=topicOf(r)?topicData[topicOf(r)]:null;
  const items=f.items.map(it=>{const t=focusText(it,h,k);return '<div class="focus-item'+(it.main?' main':'')+'"><small>'+(it.main?'主要':'參考')+'・'+E(t.head)+'</small><p class="word">'+E(t.word)+'</p><p>'+E(t.plain)+'</p></div>'}).join('');
- return '<section class="box answer" aria-labelledby="answer-title"><span class="steps">針對你的問題</span><h2 id="answer-title">'+(q?'「'+E(q)+'」':'這一卦給你的回應')+'</h2>'+
+ return '<section class="box answer" aria-labelledby="answer-title"><span class="steps">針對你的問題'+(tp?'・'+topicNames[topicOf(r)]:'')+'</span><h2 id="answer-title">'+(q?'「'+E(q)+'」':'這一卦給你的回應')+'</h2>'+
  '<dl class="answer-grid"><dt>此刻的處境</dt><dd><strong>'+h.name+'</strong>　'+E(h.core)+'</dd>'+
  '<dt>變化的方向</dt><dd>'+(m.length?'<strong>'+k.name+'</strong>　'+E(k.core):'六爻皆靜，局勢暫時穩定，重點放在眼前的處境。')+'</dd></dl>'+
  '<h3>這一卦的重點</h3><p class="muted">'+f.rule+'</p>'+items+
- '<h3>帶著問題想一想</h3><p>'+(q?'把「'+E(q)+'」放進這個提問：':'')+'<strong>'+E(h.question)+'</strong></p>'+(m.length?'<p>再從「'+k.name+'」來想：'+E(k.question)+'</p>':'')+
+ (tp?'<h3>給你的建議</h3><p>'+E(tp[h.id-1][0])+'</p>'+(m.length?'<p>往「'+k.name+'」變化時：'+E(tp[k.id-1][0])+'</p>':''):'')+'<h3>帶著問題想一想</h3><p>'+(q?'把「'+E(q)+'」放進這個提問：':'')+'<strong>'+E(tp?tp[h.id-1][1]:h.question)+'</strong></p>'+(m.length?'<p>再從「'+k.name+'」來想：'+E(tp?tp[k.id-1][1]:k.question)+'</p>':'')+
  '<p class="muted">卦象不替你做決定，只幫你換個角度看清處境。以下是完整的卦象解讀。</p></section>';
 }
+const topicData=typeof topics==='undefined'?{}:topics;
+const readyTopics=Object.keys(topicNames).filter(t=>Array.isArray(topicData[t])&&topicData[t].length===64);
+const topicOf=r=>readyTopics.includes(r.topic)?r.topic:'';
 function reading(r,historic){
  const {base:h,changed:k,moving:m}=interpret(r.lines,books);
  return '<article class="read">'+(historic?back('journal','我的手記'):'')+title(historic?'占卦手記':'解卦研習',E(new Date(r.date).toLocaleString('zh-TW')))+(r.question?'<p class="box safe">'+E(r.question)+'</p>':'')+'<div class="pair">'+tile(h,'本卦・',true,m)+tile(k,'之卦・',true)+'</div><p class="meta">初至上　'+r.lines.join(' · ')+'　'+(m.length?'● 為動爻':'六爻皆靜')+'</p>'+answer(r,h,k,m)+(!historic&&mode==='coins'?'<details class="box"><summary>六次擲幣明細</summary>'+log()+'</details>':'')+
@@ -97,7 +100,7 @@ function render(top=true){
 function preview(raw){pending=null;try{if(raw.length>10000000)throw Error();pending=validate(JSON.parse(raw));$('#review').innerHTML='<div class="feedback">已完成 '+pending.completed.length+' 課、收藏 '+pending.favorites.length+' 卦、紀錄 '+pending.records.length+' 筆。<div class="actions">'+button('apply','確認取代並還原','','primary')+link('journal','取消')+'</div></div>'}catch{$('#review').textContent='備份格式不符，原手記仍保留。'}}
 function finish(lines){draft.lines=[...lines];draft.date=new Date().toISOString();render()}
 document.addEventListener('input',e=>{const t=e.target;if(t.id==='search'){filters.text=t.value;filter()}if(t.id==='question')draft.question=t.value;if(t.id==='note'&&route()[0]==='cast')draft.note=t.value;if(t.id==='raw'){pending=null;$('#review').textContent=''}});
-document.addEventListener('change',e=>{const t=e.target;if(t.dataset.filter){filters[t.dataset.filter]=t.value;filter()}if(t.dataset.pos!==undefined){draft.manual[Number(t.dataset.pos)]=Number(t.value);$('[data-act="interpret"]').disabled=!draft.manual.every(Boolean)}if(t.id==='file'&&t.files[0]){const file=t.files[0];if(file.size>10000000){preview('');return}const reader=new FileReader();reader.onload=()=>{if(route()[0]==='restore')preview(String(reader.result))};reader.onerror=()=>preview('');reader.readAsText(file)}});
+document.addEventListener('change',e=>{const t=e.target;if(t.name==='topic')draft.topic=t.value;if(t.dataset.filter){filters[t.dataset.filter]=t.value;filter()}if(t.dataset.pos!==undefined){draft.manual[Number(t.dataset.pos)]=Number(t.value);$('[data-act="interpret"]').disabled=!draft.manual.every(Boolean)}if(t.id==='file'&&t.files[0]){const file=t.files[0];if(file.size>10000000){preview('');return}const reader=new FileReader();reader.onload=()=>{if(route()[0]==='restore')preview(String(reader.result))};reader.onerror=()=>preview('');reader.readAsText(file)}});
 document.addEventListener('click',e=>{
  const b=e.target.closest('[data-act]');if(!b||b.disabled)return;
  const [p,arg]=route(),n=Number(arg),act=b.dataset.act;
@@ -108,7 +111,7 @@ document.addEventListener('click',e=>{
  if(act==='toss'&&!draft.lines&&draft.rolls.length<6){const faces=Array.from(crypto.getRandomValues(new Uint8Array(3)),b=>2+(b&1));draft.rolls.push({faces,sum:faces.reduce((a,b)=>a+b)});if(draft.rolls.length===6)finish(draft.rolls.map(r=>r.sum));else render(false)}
  if(act==='interpret'&&validLines(draft.manual))finish(draft.manual);
  if(act==='restart'){draft=blank();if(p==='cast')render();else location.hash='cast'}
- if(act==='save'){if(p==='record')persist({...book,records:book.records.map(r=>r.id===arg?{...r,note:$('#note').value}:r)});else{if(!draft.id&&book.records.length>=5000){message('紀錄達上限，請先匯出。');return}draft.id=draft.id||crypto.getRandomValues(new Uint32Array(3)).join('-');const {id,lines,date,question,note}=draft;persist({...book,records:[{id,lines,date,question,note},...book.records.filter(r=>r.id!==id)]})}b.textContent='更新這筆手記';message(warn||'手記已儲存')}
+ if(act==='save'){if(p==='record')persist({...book,records:book.records.map(r=>r.id===arg?{...r,note:$('#note').value}:r)});else{if(!draft.id&&book.records.length>=5000){message('紀錄達上限，請先匯出。');return}draft.id=draft.id||crypto.getRandomValues(new Uint32Array(3)).join('-');const {id,lines,date,question,note}=draft,topic=topicOf(draft);persist({...book,records:[{id,lines,date,question,note,topic},...book.records.filter(r=>r.id!==id)]})}b.textContent='更新這筆手記';message(warn||'手記已儲存')}
  if(act==='export'){
   let out=document.querySelector('#export-panel');
   if(!out){out=document.createElement('section');out.id='export-panel';out.className='feedback';b.parentNode.after(out)}

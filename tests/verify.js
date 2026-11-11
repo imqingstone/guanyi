@@ -1,5 +1,5 @@
 const assert=require('node:assert/strict');
-const {interpret,focus,validate,fresh,bits}=require('../dist/engine.js');
+const {interpret,focus,validate,fresh,bits,topicNames}=require('../dist/engine.js');
 const books=require('../dist/hexagrams.json'), lessons=require('../dist/lessons.json');
 const ref=require('./reference.json').cells;
 assert.equal(books.length,64);assert.equal(ref.length,64);
@@ -36,4 +36,10 @@ for(let n=0;n<4096;n++){
  assert.equal(sig,want.join(','));assert.ok(it[0].main);
  const o=interpret(a,books);for(const x of it){const h=x.hex==='base'?o.base:o.changed;if(x.kind==='line')assert.ok(h.lines[x.index]&&h.lineGloss[x.index]);if(x.kind==='special')assert.ok(h.special&&h.specialGloss)}
 }
-console.log('PASS: 64 reference mappings; 384 line labels and translations; 4096 casts; reading-focus rule for all 4096; special texts; 10 lessons; backup schema.');
+// 問題類別：每個已收錄的類別都要有 64 卦的建議與提問；紀錄的類別需為已知值。
+const topics=require('../dist/topics.json');
+for(const [t,rows] of Object.entries(topics)){assert.ok(topicNames[t],t);assert.equal(rows.length,64);for(const r of rows){assert.equal(r.length,2);assert.ok(r[0].trim()&&r[1].trim())}}
+const rec={id:'a1',lines:[7,7,7,7,7,7],date:'2026-11-11T00:00:00.000Z',question:'',note:''};
+for(const topic of [undefined,'','study'])validate({...fresh(),records:[{...rec,topic}]});
+assert.throws(()=>validate({...fresh(),records:[{...rec,topic:'bogus'}]}));
+console.log('PASS: 64 reference mappings; 384 line labels and translations; 4096 casts; reading-focus rule for all 4096; special texts; 10 lessons; topics '+Object.keys(require('../dist/topics.json')).join('/')+'; backup schema.');
