@@ -1,5 +1,5 @@
 const assert=require('node:assert/strict');
-const {interpret,validate,fresh,bits}=require('../dist/engine.js');
+const {interpret,focus,validate,fresh,bits}=require('../dist/engine.js');
 const books=require('../dist/hexagrams.json'), lessons=require('../dist/lessons.json');
 const ref=require('./reference.json').cells;
 assert.equal(books.length,64);assert.equal(ref.length,64);
@@ -26,4 +26,14 @@ for(let n=0;n<4096;n++){
 for(const [lines,b,c] of [[[6,8,8,8,8,8],2,24],[Array(6).fill(9),1,2],[Array(6).fill(6),2,1],[Array(6).fill(7),1,1]]){const o=interpret(lines,books);assert.equal(o.base.id,b);assert.equal(o.changed.id,c)}
 assert.equal(lessons.length,10);lessons.forEach((l,i)=>{assert.equal(l.id,i+1);assert.ok(l.choices[l.correct]&&l.explanation&&l.principle&&l.plain&&l.example)});
 assert.deepEqual(validate(JSON.parse(JSON.stringify(fresh()))),fresh());assert.throws(()=>validate({...fresh(),favorites:[99]}));
-console.log('PASS: 64 reference mappings; 384 line labels and translations; 4096 casts; special texts; 10 lessons; backup schema.');
+// 朱熹取辭規則：枚舉全部 4096 組，檢查每種動爻數取用的經文與主次。
+for(let n=0;n<4096;n++){
+ const a=[0,1,2,3,4,5].map(i=>[6,7,8,9][(n>>(2*i))&3]),mv=a.flatMap((v,i)=>v===6||v===9?[i]:[]),st=[0,1,2,3,4,5].filter(i=>!mv.includes(i));
+ const f=focus(a),it=f.items,main=it.filter(x=>x.main);assert.equal(main.length,1);assert.ok(f.rule);
+ const sig=it.map(x=>x.hex+':'+x.kind+(x.index===undefined?'':':'+x.index)).join(',');
+ const want=[['base:judgment'],['base:line:'+mv[0]],['base:line:'+mv[1],'base:line:'+mv[0]],['base:judgment','changed:judgment'],['changed:line:'+st[0],'changed:line:'+st[1]],['changed:line:'+st[0]],
+  [a.every(v=>v===9)||a.every(v=>v===6)?'base:special':'changed:judgment']][mv.length];
+ assert.equal(sig,want.join(','));assert.ok(it[0].main);
+ const o=interpret(a,books);for(const x of it){const h=x.hex==='base'?o.base:o.changed;if(x.kind==='line')assert.ok(h.lines[x.index]&&h.lineGloss[x.index]);if(x.kind==='special')assert.ok(h.special&&h.specialGloss)}
+}
+console.log('PASS: 64 reference mappings; 384 line labels and translations; 4096 casts; reading-focus rule for all 4096; special texts; 10 lessons; backup schema.');
