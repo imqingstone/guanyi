@@ -52,11 +52,27 @@ function cast(){
  '<div class="coins">'+[0,1,2].map(i=>'<span class="coin"><i></i>'+(last?(last.faces[i]===2?'字面 2':'背面 3'):'銅錢')+'</span>').join('')+'</div><small>第 '+(n+1)+' 次／共六次</small><h2>現在擲'+positions[n]+'</h2>'+button('toss','擲三枚銅錢','','primary'))+
  '<p class="muted">本站約定字面為 2、背面為 3。總和 6 為老陰、7 為少陽、8 為少陰、9 為老陽。老陰轉陽，老陽轉陰。</p></section>'+(!manual?'<section class="box"><h2>擲幣紀錄</h2>'+log()+'</section>':'')+'</article>';
 }
+function focusText(it,h,k){
+ const x=it.hex==='base'?h:k,who=(it.hex==='base'?'本卦':'之卦')+'「'+x.name+'」';
+ if(it.kind==='line')return {head:who+x.labels[it.index],word:x.lines[it.index],plain:x.lineGloss[it.index]};
+ if(it.kind==='special')return {head:who+(x.id===1?'用九':'用六'),word:x.special,plain:x.specialGloss};
+ return {head:who+'卦辭',word:x.judgment,plain:x.gloss.map(s=>s.split('｜')[1]||'').join('')};
+}
+function answer(r,h,k,m){
+ const f=focus(r.lines),q=String(r.question||'').trim();
+ const items=f.items.map(it=>{const t=focusText(it,h,k);return '<div class="focus-item'+(it.main?' main':'')+'"><small>'+(it.main?'主要':'參考')+'・'+E(t.head)+'</small><p class="word">'+E(t.word)+'</p><p>'+E(t.plain)+'</p></div>'}).join('');
+ return '<section class="box answer" aria-labelledby="answer-title"><span class="steps">針對你的問題</span><h2 id="answer-title">'+(q?'「'+E(q)+'」':'這一卦給你的回應')+'</h2>'+
+ '<dl class="answer-grid"><dt>此刻的處境</dt><dd><strong>'+h.name+'</strong>　'+E(h.core)+'</dd>'+
+ '<dt>變化的方向</dt><dd>'+(m.length?'<strong>'+k.name+'</strong>　'+E(k.core):'六爻皆靜，局勢暫時穩定，重點放在眼前的處境。')+'</dd></dl>'+
+ '<h3>這一卦的重點</h3><p class="muted">'+f.rule+'</p>'+items+
+ '<h3>帶著問題想一想</h3><p>'+(q?'把「'+E(q)+'」放進這個提問：':'')+'<strong>'+E(h.question)+'</strong></p>'+(m.length?'<p>再從「'+k.name+'」來想：'+E(k.question)+'</p>':'')+
+ '<p class="muted">卦象不替你做決定，只幫你換個角度看清處境。以下是完整的卦象解讀。</p></section>';
+}
 function reading(r,historic){
  const {base:h,changed:k,moving:m}=interpret(r.lines,books);
- return '<article class="read">'+(historic?back('journal','我的手記'):'')+title(historic?'占卦手記':'解卦研習',E(new Date(r.date).toLocaleString('zh-TW')))+(r.question?'<p class="box safe">'+E(r.question)+'</p>':'')+'<div class="pair">'+tile(h,'本卦・',true,m)+tile(k,'之卦・',true)+'</div><p class="meta">初至上　'+r.lines.join(' · ')+'　'+(m.length?'● 為動爻':'六爻皆靜')+'</p>'+(!historic&&mode==='coins'?'<details class="box"><summary>六次擲幣明細</summary>'+log()+'</details>':'')+
+ return '<article class="read">'+(historic?back('journal','我的手記'):'')+title(historic?'占卦手記':'解卦研習',E(new Date(r.date).toLocaleString('zh-TW')))+(r.question?'<p class="box safe">'+E(r.question)+'</p>':'')+'<div class="pair">'+tile(h,'本卦・',true,m)+tile(k,'之卦・',true)+'</div><p class="meta">初至上　'+r.lines.join(' · ')+'　'+(m.length?'● 為動爻':'六爻皆靜')+'</p>'+answer(r,h,k,m)+(!historic&&mode==='coins'?'<details class="box"><summary>六次擲幣明細</summary>'+log()+'</details>':'')+
  '<section class="box"><span class="steps">一・看懂卦象</span><h2>'+h.name+'卦</h2><p>'+symbol(h)+E(h.core)+'</p><p class="classic">'+E(h.judgment)+'</p><span class="tag">傳文・大象</span><p>'+E(h.image)+'<br>'+E(h.imageGloss)+'</p></section>'+
- '<section class="box"><span class="steps">二・理解動爻</span><h2>'+(m.length?m.map(i=>h.labels[i]).join('、'):'無動爻')+'</h2><p class="muted">本站採逐爻並讀的學習方式，列出所有動爻供對照。傳統另有不同取辭規則。</p>'+(m.length?m.map(i=>line(h,i)).join(''):'<p>此次六爻皆靜，先讀本卦卦辭與上下卦的關係。</p>')+(m.length===6&&h.special?special(h):'')+'</section>'+
+ '<section class="box"><span class="steps">二・理解動爻</span><h2>'+(m.length?m.map(i=>h.labels[i]).join('、'):'無動爻')+'</h2><p class="muted">以下列出所有動爻供對照；上方「這一卦的重點」依朱熹《易學啟蒙》的取辭規則，標出這次主要該讀的經文。</p>'+(m.length?m.map(i=>line(h,i)).join(''):'<p>此次六爻皆靜，先讀本卦卦辭與上下卦的關係。</p>')+(m.length===6&&h.special?special(h):'')+'</section>'+
  '<section class="box"><span class="steps">三・理解變化</span><h2>'+h.name+(m.length?' 之 '+k.name:'・卦象相同')+'</h2><p>'+(m.length?'原先'+symbol(h)+'陰陽轉換後，'+symbol(k):'六爻保留原形，本卦與之卦相同。')+'</p>'+(m.length?'<p class="classic">'+E(k.judgment)+'</p>'+E(k.core):'')+'</section>'+
  '<section class="box"><span class="steps">四・反思與應用</span><h2>回到自己的處境</h2><p>'+E(h.application)+'</p><strong>'+E(h.question)+'</strong>'+(m.length?'<p>再從「'+k.name+'」來想：'+E(k.question)+'</p>':'')+'<p class="muted">這些是生活反思提示，實際決策仍應核對現實條件。</p></section><section class="box"><label>我的心得<textarea id="note" maxlength="3000">'+E(r.note)+'</textarea></label><div class="actions">'+button('save',historic||draft.id?'更新這筆手記':'儲存這筆手記','','primary')+button('restart','重新起卦')+'</div></section></article>';
 }
