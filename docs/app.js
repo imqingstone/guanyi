@@ -98,7 +98,7 @@ function render(top=true){
  if(top){window.scrollTo(0,0);$('#main').focus({preventScroll:true})}
 }
 function preview(raw){pending=null;try{if(raw.length>10000000)throw Error();pending=validate(JSON.parse(raw));$('#review').innerHTML='<div class="feedback">已完成 '+pending.completed.length+' 課、收藏 '+pending.favorites.length+' 卦、紀錄 '+pending.records.length+' 筆。<div class="actions">'+button('apply','確認取代並還原','','primary')+link('journal','取消')+'</div></div>'}catch{$('#review').textContent='備份格式不符，原手記仍保留。'}}
-function finish(lines){draft.lines=[...lines];draft.date=new Date().toISOString();render()}
+function finish(lines){useCount();draft.lines=[...lines];draft.date=new Date().toISOString();render()}
 document.addEventListener('input',e=>{const t=e.target;if(t.id==='search'){filters.text=t.value;filter()}if(t.id==='question')draft.question=t.value;if(t.id==='note'&&route()[0]==='cast')draft.note=t.value;if(t.id==='raw'){pending=null;$('#review').textContent=''}});
 document.addEventListener('change',e=>{const t=e.target;if(t.name==='topic')draft.topic=t.value;if(t.dataset.filter){filters[t.dataset.filter]=t.value;filter()}if(t.dataset.pos!==undefined){draft.manual[Number(t.dataset.pos)]=Number(t.value);$('[data-act="interpret"]').disabled=!draft.manual.every(Boolean)}if(t.id==='file'&&t.files[0]){const file=t.files[0];if(file.size>10000000){preview('');return}const reader=new FileReader();reader.onload=()=>{if(route()[0]==='restore')preview(String(reader.result))};reader.onerror=()=>preview('');reader.readAsText(file)}});
 document.addEventListener('click',e=>{
@@ -125,3 +125,8 @@ document.addEventListener('click',e=>{
  if(act==='apply'&&pending){persist(pending);pending=null;draft=blank();Object.keys(attempts).forEach(k=>delete attempts[k]);location.hash='journal';message(warn||'手記已還原')}
 });
 window.addEventListener('hashchange',()=>render());render(false);if(warn)message(warn);
+
+// 使用次數：每次使用記一筆到 GoatCounter，並在頁尾顯示累計次數（只記次數，不送出任何輸入內容）。
+const usagePath='guanyi-cast';
+function useCount(){try{const g=window.goatcounter;if(g&&g.count)g.count({path:usagePath,title:'觀易起卦',event:true,no_session:true})}catch(e){}}
+fetch('https://imqingstone.goatcounter.com/counter/'+usagePath+'.json').then(r=>r.ok?r.json():null).then(d=>{const el=document.getElementById('usage');if(el&&d&&d.count){el.textContent='已起過 '+d.count+' 次卦';el.hidden=false}}).catch(()=>{});
