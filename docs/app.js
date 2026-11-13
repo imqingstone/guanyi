@@ -53,7 +53,7 @@ function cast(){
  '<p class="muted">本站約定字面為 2、背面為 3。總和 6 為老陰、7 為少陽、8 為少陰、9 為老陽。老陰轉陽，老陽轉陰。</p></section>'+(!manual?'<section class="box"><h2>擲幣紀錄</h2>'+log()+'</section>':'')+'</article>';
 }
 function focusText(it,h,k){
- const x=it.hex==='base'?h:k,who=(it.hex==='base'?'本卦':'之卦')+'「'+x.name+'」';
+ const x=it.hex==='base'?h:k,who=(it.hex==='base'?'本卦':'變卦')+'「'+x.name+'」';
  if(it.kind==='line')return {head:who+x.labels[it.index],word:x.lines[it.index],plain:x.lineGloss[it.index]};
  if(it.kind==='special')return {head:who+(x.id===1?'用九':'用六'),word:x.special,plain:x.specialGloss};
  return {head:who+'卦辭',word:x.judgment,plain:x.gloss.map(s=>s.split('｜')[1]||'').join('')};
@@ -73,17 +73,17 @@ const readyTopics=Object.keys(topicNames).filter(t=>Array.isArray(topicData[t])&
 const topicOf=r=>readyTopics.includes(r.topic)?r.topic:'';
 function reading(r,historic){
  const {base:h,changed:k,moving:m}=interpret(r.lines,books);
- return '<article class="read">'+(historic?back('journal','我的手記'):'')+title(historic?'占卦手記':'解卦研習',E(new Date(r.date).toLocaleString('zh-TW')))+(r.question?'<p class="box safe">'+E(r.question)+'</p>':'')+'<div class="pair">'+tile(h,'本卦・',true,m)+tile(k,'之卦・',true)+'</div><p class="meta">初至上　'+r.lines.join(' · ')+'　'+(m.length?'● 為動爻':'六爻皆靜')+'</p>'+answer(r,h,k,m)+(!historic&&mode==='coins'?'<details class="box"><summary>六次擲幣明細</summary>'+log()+'</details>':'')+
+ return '<article class="read">'+(historic?back('journal','我的手記'):'')+title(historic?'占卦手記':'解卦研習',E(new Date(r.date).toLocaleString('zh-TW')))+(r.question?'<p class="box safe">'+E(r.question)+'</p>':'')+'<div class="pair">'+tile(h,'本卦・',true,m)+tile(k,'變卦・',true)+'</div><p class="meta">初至上　'+r.lines.join(' · ')+'　'+(m.length?'● 為動爻':'六爻皆靜')+'</p>'+answer(r,h,k,m)+(!historic&&mode==='coins'?'<details class="box"><summary>六次擲幣明細</summary>'+log()+'</details>':'')+
  '<section class="box"><span class="steps">一・看懂卦象</span><h2>'+h.name+'卦</h2><p>'+symbol(h)+E(h.core)+'</p><p class="classic">'+E(h.judgment)+'</p><span class="tag">傳文・大象</span><p>'+E(h.image)+'<br>'+E(h.imageGloss)+'</p></section>'+
  '<section class="box"><span class="steps">二・理解動爻</span><h2>'+(m.length?m.map(i=>h.labels[i]).join('、'):'無動爻')+'</h2><p class="muted">以下列出所有動爻供對照；上方「這一卦的重點」依朱熹《易學啟蒙》的取辭規則，標出這次主要該讀的經文。</p>'+(m.length?m.map(i=>line(h,i)).join(''):'<p>此次六爻皆靜，先讀本卦卦辭與上下卦的關係。</p>')+(m.length===6&&h.special?special(h):'')+'</section>'+
- '<section class="box"><span class="steps">三・理解變化</span><h2>'+h.name+(m.length?' 之 '+k.name:'・卦象相同')+'</h2><p>'+(m.length?'原先'+symbol(h)+'陰陽轉換後，'+symbol(k):'六爻保留原形，本卦與之卦相同。')+'</p>'+(m.length?'<p class="classic">'+E(k.judgment)+'</p>'+E(k.core):'')+'</section>'+
+ '<section class="box"><span class="steps">三・理解變化</span><h2>'+h.name+(m.length?' 之 '+k.name:'・卦象相同')+'</h2><p>'+(m.length?'原先'+symbol(h)+'陰陽轉換後，'+symbol(k):'六爻保留原形，本卦與變卦相同。')+'</p>'+(m.length?'<p class="classic">'+E(k.judgment)+'</p>'+E(k.core):'')+'</section>'+
  '<section class="box"><span class="steps">四・反思與應用</span><h2>回到自己的處境</h2><p>'+E(h.application)+'</p><strong>'+E(h.question)+'</strong>'+(m.length?'<p>再從「'+k.name+'」來想：'+E(k.question)+'</p>':'')+'<p class="muted">這些是生活反思提示，實際決策仍應核對現實條件。</p></section><section class="box"><label>我的心得<textarea id="note" maxlength="3000">'+E(r.note)+'</textarea></label><div class="actions">'+button('save',historic||draft.id?'更新這筆手記':'儲存這筆手記','','primary')+button('restart','重新起卦')+'</div></section></article>';
 }
 function journal(){
  return title('我的手記','紀錄儲存在這個瀏覽器。清除網站資料或更換網址前，請先匯出。')+(warn?'<p class="feedback">'+E(warn)+'</p>':'')+'<section class="box"><h2>資料備份</h2><small>備份含提問與心得，請自行妥善保管。</small><div class="actions">'+button('export','匯出 JSON')+link('restore','匯入備份')+'</div></section><section class="box"><h2>學習進度</h2>'+book.completed.length+'／10 課　'+link('school','查看課程 →','trail')+'</section><h2>收藏的卦</h2>'+(book.favorites.length?'<div class="tiles">'+book.favorites.map(n=>tile(books[n-1])).join('')+'</div>':'<p class="muted">在卦象圖鑑點「收藏此卦」即可收錄。</p>')+'<div class="heading"><h2>占卦紀錄</h2><small>'+book.records.length+' 筆</small></div>'+(!book.records.length?'<p>完成起卦後，點選「儲存這筆手記」。</p>':book.records.map(r=>{const o=interpret(r.lines,books);return link('record/'+r.id,'<span><small>'+E(new Date(r.date).toLocaleString('zh-TW'))+'</small><strong>'+o.base.name+' → '+o.changed.name+'</strong><span class="safe">　'+E(r.question)+'</span></span>','tile')}).join(''));
 }
 function restore(){return '<article class="read">'+back('journal','我的手記')+title('還原備份','選取曾匯出的 JSON，檢查後再確認。還原將取代本機收藏、學習進度與占卦紀錄。')+'<section class="box"><label>選取備份檔<input type="file" id="file" accept=".json,application/json"></label><details><summary>或貼上 JSON 文字</summary><label>備份內容<textarea id="raw"></textarea></label>'+button('parse','檢查備份')+'</details><div id="review" role="status"></div></section></article>'}
-function source(){return '<article class="read">'+title('版本與閱讀說明')+'<section class="box"><h2>經文與《象傳》</h2><p>卦辭、爻辭與《大象》採維基文庫繁體《周易》，各卦附固定修訂版連結。保留「无」等古字，略去異文夾註。古典經傳屬公有領域，文庫整理依姓名標示－相同方式分享 4.0 授權。</p><p>《大象》談全卦取象，本版收錄六十四則。《小象》屬逐爻傳文，未收錄。白話、現代延伸與反思題皆為本站編寫。</p><a class="trail" href="https://zh.wikisource.org/zh-hant/周易" target="_blank" rel="noopener">維基文庫《周易》 ↗</a></section><section class="box"><h2>教學讀法</h2><p>先辨上下卦，再讀動爻、比較之卦。六爻皆靜時參看卦辭。乾坤六爻皆動時，另讀用九或用六。這套並讀順序供學習與反思。</p></section></article>'}
+function source(){return '<article class="read">'+title('版本與閱讀說明')+'<section class="box"><h2>經文與《象傳》</h2><p>卦辭、爻辭與《大象》採維基文庫繁體《周易》，各卦附固定修訂版連結。保留「无」等古字，略去異文夾註。古典經傳屬公有領域，文庫整理依姓名標示－相同方式分享 4.0 授權。</p><p>《大象》談全卦取象，本版收錄六十四則。《小象》屬逐爻傳文，未收錄。白話、現代延伸與反思題皆為本站編寫。</p><a class="trail" href="https://zh.wikisource.org/zh-hant/周易" target="_blank" rel="noopener">維基文庫《周易》 ↗</a></section><section class="box"><h2>教學讀法</h2><p>先辨上下卦，再讀動爻、比較變卦。六爻皆靜時參看卦辭。乾坤六爻皆動時，另讀用九或用六。這套並讀順序供學習與反思。</p></section></article>'}
 function route(){return (location.hash.slice(1)||'home').split('/')}
 function render(top=true){
  const [p,arg]=route();let body,group=p;const n=Number(arg);
