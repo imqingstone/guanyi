@@ -18,12 +18,12 @@ function focus(a){
   case 0:return {rule:'六爻皆靜，看本卦卦辭。',items:[J('base',true)]};
   case 1:return {rule:'一爻動，看本卦這一爻的爻辭。',items:[L('base',moving[0],true)]};
   case 2:return {rule:'二爻動，看本卦這兩爻的爻辭，以上面那一爻為主。',items:[L('base',moving[1],true),L('base',moving[0],false)]};
-  case 3:return {rule:'三爻動，看本卦與之卦的卦辭，以本卦為主、之卦為輔。',items:[J('base',true),J('changed',false)]};
-  case 4:return {rule:'四爻動，看之卦兩個不變爻的爻辭，以下面那一爻為主。',items:[L('changed',still[0],true),L('changed',still[1],false)]};
-  case 5:return {rule:'五爻動，看之卦唯一不變那一爻的爻辭。',items:[L('changed',still[0],true)]};
+  case 3:return {rule:'三爻動，看本卦與變卦的卦辭，以本卦為主、變卦為輔。',items:[J('base',true),J('changed',false)]};
+  case 4:return {rule:'四爻動，看變卦兩個不變爻的爻辭，以下面那一爻為主。',items:[L('changed',still[0],true),L('changed',still[1],false)]};
+  case 5:return {rule:'五爻動，看變卦唯一不變那一爻的爻辭。',items:[L('changed',still[0],true)]};
   default:{const qiankun=a.every(n=>n===9)||a.every(n=>n===6);
    return qiankun?{rule:'六爻皆動，乾坤兩卦看用九、用六。',items:[{hex:'base',kind:'special',main:true}]}
-   :{rule:'六爻皆動，看之卦卦辭。',items:[J('changed',true)]}}
+   :{rule:'六爻皆動，看變卦卦辭。',items:[J('changed',true)]}}
  }
 }
 function fresh(){return {format:'guanyi',version:1,favorites:[],completed:[],records:[]}}
